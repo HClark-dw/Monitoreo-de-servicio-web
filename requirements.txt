@@ -1,0 +1,12 @@
+# Dependencias del Proyecto
+# -------------------------------------------------------------
+# El núcleo de este proyecto (Monitoreo Concurrente, Probers de Red HTTP/TCP,
+# Registro Estructurado JSONL/Rotativo, API REST y Dashboard Web) está construido
+# al 100% con la Biblioteca Estándar de Python (Python 3.10+ / 3.14+).
+#
+# No requiere instalar ningún paquete externo para ejecutarse:
+#   python main.py
+#
+# Dependencias opcionales de desarrollo y análisis de calidad:
+# pytest>=7.0.0
+# flake8>=6.0.0

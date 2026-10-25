@@ -1,0 +1,67 @@
+{
+  "settings": {
+    "default_check_interval_seconds": 10,
+    "default_timeout_seconds": 3.0,
+    "max_concurrent_workers": 5,
+    "api_port": 8080,
+    "api_host": "127.0.0.1",
+    "log_level": "INFO",
+    "log_file": "logs/monitor.log",
+    "json_log_file": "logs/monitor.jsonl"
+  },
+  "targets": [
+    {
+      "name": "Google Public DNS",
+      "type": "tcp",
+      "host": "8.8.8.8",
+      "port": 53,
+      "interval_seconds": 10,
+      "timeout_seconds": 2.0
+    },
+    {
+      "name": "Cloudflare DNS",
+      "type": "tcp",
+      "host": "1.1.1.1",
+      "port": 53,
+      "interval_seconds": 10,
+      "timeout_seconds": 2.0
+    },
+    {
+      "name": "HTTPBin Status 200 (Online)",
+      "type": "http",
+      "url": "https://httpbin.org/status/200",
+      "method": "GET",
+      "interval_seconds": 15,
+      "timeout_seconds": 5.0,
+      "expected_status": 200
+    },
+    {
+      "name": "GitHub API",
+      "type": "http",
+      "url": "https://api.github.com",
+      "method": "GET",
+      "interval_seconds": 15,
+      "timeout_seconds": 5.0,
+      "expected_status": 200,
+      "verify_ssl": false
+    },
+    {
+      "name": "Simulated Down Service (404 Not Found)",
+      "type": "http",
+      "url": "https://httpbin.org/status/404",
+      "method": "GET",
+      "interval_seconds": 15,
+      "timeout_seconds": 5.0,
+      "expected_status": 200
+    },
+    {
+      "name": "Simulated DNS Error (Non-existent Domain)",
+      "type": "http",
+      "url": "https://dominio-que-seguro-no-existe-para-test-12345.com",
+      "method": "GET",
+      "interval_seconds": 20,
+      "timeout_seconds": 3.0,
+      "expected_status": 200
+    }
+  ]
+}
