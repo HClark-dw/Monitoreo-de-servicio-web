@@ -1,3 +1,61 @@
+# 🚀 Server Health Monitoring Engine & API
+
+> **Portfolio Project:** Resilient and concurrent application for periodic health check monitoring of web services (HTTP/HTTPS) and network IP/ports (TCP), featuring JSON Lines rotating structured logging, SLA metrics calculation, and a real-time web dashboard.
+
+---
+
+## 🎯 Executive Summary & Scope
+
+This application periodically and concurrently checks the operational health of a configurable list of endpoints and servers, detecting outages, abnormal latencies, and service degradations.
+
+### Delivered Scope
+- ✅ **Configurable Target List:** `config.json` file supporting HTTP methods, expected status codes, independent intervals, and timeouts per target.
+- ✅ **Periodic Concurrent Probing:** Multi-threaded routine built on `ThreadPoolExecutor` with independent timers and Graceful Shutdown capabilities.
+- ✅ **High-Precision Latency Measurement:** Millisecond-level response time tracking and moving average calculations.
+- ✅ **Dual Reporting:** Formatted visual console output and real-time **REST API Server + Interactive Web Dashboard**.
+- ✅ **Professional Structured Logging:** Rotating log handler for humans (`logs/monitor.log`) and JSON Lines format (`logs/monitor.jsonl`) for log aggregators like Datadog, ElasticSearch, or Grafana Loki.
+- ✅ **Zero External Dependencies:** 100% built on top of the **Python Standard Library** (runs instantly with `python main.py` in any environment).
+
+---
+
+## 🧠 Technical Interview Key Highlights
+
+This project is engineered to showcase and defend the following software engineering competencies:
+
+| Key Topic | Implementation in Code | Technical Justification |
+| :--- | :--- | :--- |
+| **Networking & Sockets** | [`monitor/probers.py`](monitor/probers.py) | Implements `HttpProber` (application layer) and `TcpProber` (transport layer). Measures socket SYN/ACK handshake negotiations without requiring ICMP root privileges. |
+| **Granular Exception Handling** | [`monitor/probers.py`](monitor/probers.py) | Avoids generic `except Exception` blocks that mask failures; explicitly discriminates `socket.gaierror` (DNS), `socket.timeout` (Timeout), `ConnectionRefusedError` (Service down/Firewall), and `HTTPError` (4xx/5xx codes). |
+| **Concurrency & Synchronization** | [`monitor/engine.py`](monitor/engine.py) & [`monitor/store.py`](monitor/store.py) | Employs `ThreadPoolExecutor` to eliminate network latency blocking. Protects shared state using `threading.RLock` against concurrent worker writes and HTTP API reads. |
+| **Clean Data Structuring** | [`monitor/models.py`](monitor/models.py) | Extensive use of `@dataclass` with strict typing (`TargetConfig`, `CheckResult`, `TargetMetrics`), `__post_init__` validations, and incremental SLA availability calculations (`Uptime %`). |
+| **Resilience & Graceful Shutdown** | [`monitor/engine.py`](monitor/engine.py) & [`main.py`](main.py) | Traps `SIGINT` (Ctrl+C) and `SIGTERM` signals, gracefully stopping threads, canceling pending tasks, and releasing socket descriptors. |
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TD
+    Config["config.json\n(Targets & Settings)"] --> Engine["MonitoringEngine\n(ThreadPoolExecutor)"]
+    
+    subgraph Probers["Probing Strategies (Probers)"]
+        HttpP["HttpProber\n(GET / HEAD / Status Codes)"]
+        TcpP["TcpProber\n(TCP SYN Socket / Latency)"]
+    end
+    
+    Engine --> Probers
+    Probers --> Store["MetricsStore\n(Thread-Safe RLock)"]
+    Probers --> Logger["Structured Logger\n(Rotating + JSONL)"]
+    
+    Store --> ConsoleReport["Tabular Console\n(CLI Live Report)"]
+    Store --> ApiServer["MonitorApiServer\n(ThreadingHTTPServer)"]
+    
+    ApiServer --> WebDashboard["HTML5/JS Web Dashboard\n(GET /)"]
+    ApiServer --> RestEndpoints["REST Endpoints\n(GET /status, /metrics, /health)"]
+    
+    Logger --> FileLog["logs/monitor.log"]
+    Logger --> JsonLog["logs/monitor.jsonl"]
+
 # 🚀 API y Motor de Monitoreo de Estado de Servidores
 
 > **Proyecto de Portafolio:** Aplicación resiliente y concurrente para verificación periódica de disponibilidad de servicios web (HTTP/HTTPS) y direcciones IP / puertos de red (TCP), con registro estructurado rotativo en JSON Lines, cálculo de SLAs y panel web en tiempo real.
