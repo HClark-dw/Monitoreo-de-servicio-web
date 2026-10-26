@@ -56,6 +56,10 @@ flowchart TD
     Logger --> FileLog["logs/monitor.log"]
     Logger --> JsonLog["logs/monitor.jsonl"]
 
+
+
+
+
 # 🚀 API y Motor de Monitoreo de Estado de Servidores
 
 > **Proyecto de Portafolio:** Aplicación resiliente y concurrente para verificación periódica de disponibilidad de servicios web (HTTP/HTTPS) y direcciones IP / puertos de red (TCP), con registro estructurado rotativo en JSON Lines, cálculo de SLAs y panel web en tiempo real.
